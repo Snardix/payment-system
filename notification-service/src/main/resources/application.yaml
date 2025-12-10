@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: notification-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5440/notification_service
+    username: root
+    password: root
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+      hibernate:
+        ddl-auto: none
+      show-sql: true
+
+  liquibase:
+      change-log: classpath:db/changelog/db.changelog-master.yml
+
+  logging:
+    level:
+      root: INFO
+      org.springframework.jdbc.core: DEBUG
+
+server:
+  port: 8082
