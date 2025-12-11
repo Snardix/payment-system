@@ -3,7 +3,7 @@ spring:
     name: audit-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5440/audit_service
+    url: jdbc:postgresql://postgres:5432/audit_service
     username: root
     password: root
     driver-class-name: org.postgresql.Driver

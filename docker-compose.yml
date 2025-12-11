@@ -12,7 +12,14 @@ services:
       - postgres_data:/var/lib/postgresql
       - ./init-db:/docker-entrypoint-initdb.d
     restart: unless-stopped
-    
+
+  redis:
+    image: redis:7
+    container_name: notification_redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.6.1
     container_name: zookeeper
@@ -41,55 +48,42 @@ services:
 
   auth-service:
     build: ./auth-service
-    image: auth-service:1.0.0
     container_name: auth-service
     ports:
       - "8081:8081"
     depends_on:
       - postgres
-    environment:
-      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/auth_service"
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
+      - kafka
 
   payment-service:
     build: ./payment-service
-    image: payment-service:1.0.0
     container_name: payment-service
     ports:
       - "8083:8083"
     depends_on:
       - postgres
-    environment:
-      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/payment_service"
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
+      - kafka
 
   notification-service:
     build: ./notification-service
-    image: notification-service:1.0.0
     container_name: notification-service
     ports:
       - "8082:8082"
     depends_on:
-      - postgres
+      - redis
+      - kafka
     environment:
-      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/notification_service"
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
 
   audit-service:
     build: ./audit-service
-    image: audit-service:1.0.0
     container_name: audit-service
     ports:
       - "8084:8084"
     depends_on:
       - postgres
-    environment:
-      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/audit_service"
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
+      - kafka
 
 volumes:
   postgres_data:

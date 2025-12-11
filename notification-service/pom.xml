@@ -1,69 +1,61 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
 	<modelVersion>4.0.0</modelVersion>
 
-	<!-- ВАЖНО: Spring Boot Parent -->
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.0</version>  <!-- или твоя версия -->
+		<version>3.2.0</version>
 		<relativePath/>
 	</parent>
 
 	<groupId>com.example</groupId>
 	<artifactId>notification-service</artifactId>
 	<version>1.0.0</version>
-	<name>payment-service</name>
+	<name>notification-service</name>
 
 	<properties>
 		<java.version>17</java.version>
 	</properties>
 
-<dependencies>
-	<!-- Web для REST (если нужны эндпоинты) -->
-	<dependency>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-web</artifactId>
-	</dependency>
+	<dependencies>
 
-	<!-- JPA + PostgreSQL для логов -->
-	<dependency>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-data-jpa</artifactId>
-	</dependency>
-	<dependency>
-		<groupId>org.postgresql</groupId>
-		<artifactId>postgresql</artifactId>
-	</dependency>
+		<!-- Web (если понадобятся REST-эндпоинты) -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
 
-	<!-- Kafka для подписки на события -->
-	<dependency>
-		<groupId>org.springframework.kafka</groupId>
-		<artifactId>spring-kafka</artifactId>
-	</dependency>
+		<!-- Kafka consumer -->
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
 
-	<!-- Redis (для очередей/кеширования, если нужно) -->
-	<dependency>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-data-redis</artifactId>
-	</dependency>
+		<!-- Redis для хранения уведомлений -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
 
-	<!-- Liquibase -->
-	<dependency>
-		<groupId>org.liquibase</groupId>
-		<artifactId>liquibase-core</artifactId>
-	</dependency>
+		<!-- Lombok (если используешь) -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
 
-	<!-- Тестирование -->
-	<dependency>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-test</artifactId>
-		<scope>test</scope>
-	</dependency>
-</dependencies>
+		<!-- Тесты -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
 
-	<!-- Plugin для spring-boot:run -->
+	</dependencies>
+
 	<build>
 		<plugins>
 			<plugin>

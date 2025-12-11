@@ -3,7 +3,7 @@ spring:
     name: payment-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5440/payment_service
+    url: jdbc:postgresql://postgres:5432/payment_service
     username: root
     password: root
     driver-class-name: org.postgresql.Driver

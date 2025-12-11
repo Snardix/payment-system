@@ -8,6 +8,7 @@ import com.example.auth_service.api.mapper.UserMapper;
 import com.example.auth_service.domain.model.User;
 import com.example.auth_service.domain.enums.Role;
 import com.example.auth_service.domain.repository.UserRepository;
+import com.example.auth_service.kafka.producer.AuthEventProducer;
 import com.example.auth_service.security.jwt.JwtService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,13 +19,15 @@ public class AuthService {
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final AuthEventProducer authEventProducer;
 
     public AuthService(UserRepository repository,
                        PasswordEncoder passwordEncoder,
-                       JwtService jwtService) {
+                       JwtService jwtService, AuthEventProducer authEventProducer) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.authEventProducer = authEventProducer;
     }
 
     public AuthResponse register(RegisterRequest request) {
@@ -39,6 +42,9 @@ public class AuthService {
         user.setRole(Role.USER);
 
         repository.save(user);
+
+        // 🚀 Отправляем событие о регистрации
+        authEventProducer.sendRegistrationEvent(user.getEmail());
 
         String token = jwtService.generateToken(
                 user.getEmail(),
