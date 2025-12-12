@@ -43,7 +43,6 @@ public class AuthService {
 
         repository.save(user);
 
-        // 🚀 Отправляем событие о регистрации
         authEventProducer.sendRegistrationEvent(user.getEmail());
 
         String token = jwtService.generateToken(

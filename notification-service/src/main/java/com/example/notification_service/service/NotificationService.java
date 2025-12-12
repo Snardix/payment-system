@@ -12,11 +12,14 @@ public class NotificationService {
         this.redis = redis;
     }
 
-    public void saveNotification(String email, String message) {
-        redis.opsForValue().set(email, message);
+    public void saveEvent(String email, String eventJson) {
+        String key = "notifications:" + email;
+
+        redis.opsForList().leftPush(key, eventJson);
     }
 
-    public String getNotification(String email) {
-        return redis.opsForValue().get(email);
+    public java.util.List<String> getEvents(String email) {
+        String key = "notifications:" + email;
+        return redis.opsForList().range(key, 0, -1);
     }
 }

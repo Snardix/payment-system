@@ -76,14 +76,5 @@ services:
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
 
-  audit-service:
-    build: ./audit-service
-    container_name: audit-service
-    ports:
-      - "8084:8084"
-    depends_on:
-      - postgres
-      - kafka
-
 volumes:
   postgres_data:
