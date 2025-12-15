@@ -15,6 +15,7 @@
     <option name="ignoredFiles">
       <set>
         <option value="$PROJECT_DIR$/admin-dashboard-service/pom.xml" />
+        <option value="$PROJECT_DIR$/audit-service/pom.xml" />
       </set>
     </option>
   </component>
