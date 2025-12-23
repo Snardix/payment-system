@@ -2,9 +2,6 @@ name: CI Docker Compose
 
 on:
   push:
-    branches:
-      - main
-      - develop
 
 jobs:
   docker-compose-test:
