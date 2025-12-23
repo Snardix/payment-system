@@ -27,6 +27,8 @@
 * **Spring Security**
 * **PostgreSQL**
 * **Docker** (Dockerfile + Docker-compose)
+* **Kafka**
+* **Redis**
 
 ---
 
