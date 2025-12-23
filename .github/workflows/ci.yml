@@ -1,0 +1,49 @@
+name: CI Docker Compose
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  docker-compose-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Забираем код
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Устанавливаем Docker Compose
+      - name: Set up Docker Compose
+        run: docker compose version
+
+      # 3. Собираем и поднимаем ВСЕ контейнеры
+      - name: Build and start containers
+        run: |
+          docker compose up --build -d
+
+      # 4. Ждём, чтобы сервисы стартовали
+      - name: Wait for services
+        run: sleep 40
+
+      # 5. Проверяем статус контейнеров
+      - name: Check containers status
+        run: docker compose ps
+
+      # 6. Проверяем, что контейнеры НЕ упали
+      - name: Fail if any container exited
+        run: |
+          if docker compose ps | grep -E "Exit|exited"; then
+            echo "One or more containers failed"
+            docker compose logs
+            exit 1
+          else
+            echo "All containers are running"
+          fi
+
+      # 7. Останавливаем всё
+      - name: Shutdown containers
+        if: always()
+        run: docker compose down
