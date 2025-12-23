@@ -62,6 +62,8 @@ public class AuthService {
             throw new AuthException("Неверный пароль");
         }
 
+        authEventProducer.sendAuthEvent(user.getEmail());
+
         String token = jwtService.generateToken(
                 user.getEmail(),
                 user.getRole().name()

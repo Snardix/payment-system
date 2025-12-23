@@ -1,6 +1,6 @@
 package com.example.auth_service.kafka.producer;
 
-import com.example.auth_service.api.dto.RegistrationEvent;
+import com.example.auth_service.api.dto.SendEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -18,12 +18,27 @@ public class AuthEventProducer {
     }
 
     public void sendRegistrationEvent(String email) {
-        RegistrationEvent event = new RegistrationEvent(
+        SendEvent event = new SendEvent(
                 email,
                 "REGISTER",
                 System.currentTimeMillis()
         );
 
+        try {
+            String json = objectMapper.writeValueAsString(event);
+            kafkaTemplate.send("auth-events", json);
+            System.out.println("Kafka: отправлено событие → " + json);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Ошибка сериализации события", e);
+        }
+    }
+
+    public void sendAuthEvent(String email) {
+        SendEvent event = new SendEvent(
+                email,
+                "LOGIN",
+                System.currentTimeMillis()
+        );
         try {
             String json = objectMapper.writeValueAsString(event);
             kafkaTemplate.send("auth-events", json);

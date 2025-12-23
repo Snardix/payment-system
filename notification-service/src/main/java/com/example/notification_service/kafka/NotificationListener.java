@@ -1,6 +1,6 @@
 package com.example.notification_service.kafka;
 
-import com.example.notification_service.dto.RegistrationEvent;
+import com.example.notification_service.dto.GetEvent;
 import com.example.notification_service.service.NotificationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -16,10 +16,10 @@ public class NotificationListener {
     }
 
     @KafkaListener(topics = "auth-events")
-    public void handleRegistrationEvent(String json) {
+    public void handleEvent(String json) {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            RegistrationEvent event = mapper.readValue(json, RegistrationEvent.class);
+            GetEvent event = mapper.readValue(json, GetEvent.class);
 
             notificationService.saveEvent(event.getEmail(), json);
 

@@ -1,11 +1,11 @@
 package com.example.notification_service.dto;
 
-public class RegistrationEvent {
+public class GetEvent {
     private String email;
     private String type;
     private long timestamp;
 
-    public RegistrationEvent() {}
+    public GetEvent() {}
 
     public String getEmail() { return email; }
     public String getType() { return type; }
