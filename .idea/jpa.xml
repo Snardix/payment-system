@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JpaBuddyIdeaProjectConfig">
-    <option name="reLastEntityCreationPackage" value="auth-service/src/main/java/com/example/auth_service/domain/model" />
-    <option name="reverseEngineeringLastDbConnectionId" value="ab33e679-61b4-4ccf-ac13-c4cd69aa7601__auth_service_public" />
+    <option name="reLastEntityCreationPackage" value="payment-service/src/main/java/com/example/payment_service/model" />
+    <option name="reverseEngineeringLastDbConnectionId" value="2d5ba78b-78ed-4fba-b7e1-e2d4bf26ca8d__payment_service_public" />
   </component>
 </project>

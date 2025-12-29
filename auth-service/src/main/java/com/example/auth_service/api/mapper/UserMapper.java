@@ -28,17 +28,11 @@ public class UserMapper {
         return user;
     }
 
-    /**
-     * Entity -> UserDto
-     */
     public static UserDto toDto(User user) {
         if (user == null) return null;
         return new UserDto(user.getId(), user.getEmail(), user.getRole());
     }
 
-    /**
-     * Entity -> AuthResponse.user (UserDto) or list mapping
-     */
     public static List<UserDto> toDtoList(List<User> users) {
         return users.stream()
                 .map(UserMapper::toDto)
