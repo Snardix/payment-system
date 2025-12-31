@@ -2,30 +2,18 @@ spring:
   application:
     name: auth-service
 
-  datasource:
-    url: jdbc:postgresql://postgres:5432/auth_service
-    username: root
-    password: root
-    driver-class-name: org.postgresql.Driver
-
   jpa:
     hibernate:
       ddl-auto: none
     show-sql: true
 
-  kafka:
-    bootstrap-servers: kafka:9092
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
-
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yml
 
-  logging:
-    level:
-      root: INFO
-      org.springframework.jdbc.core: DEBUG
+  security:
+    jwt:
+      secret: supersecretjwtkeysupersecretjwtkey123
+      expiration: 86400000
 
 server:
   port: 8081

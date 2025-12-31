@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DelegationContextManager">
+    <lastDelegates>
+      <entry key="com.example.payment_service.service.AccountService" value="com.example.payment_service.controller.AccountController" />
+    </lastDelegates>
+  </component>
+  <component name="SpringProjectLocalState">
+    <option name="firstOpen" value="false" />
+  </component>
+</project>

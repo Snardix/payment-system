@@ -46,7 +46,7 @@ public class AuthService {
         authEventProducer.sendRegistrationEvent(user.getEmail());
 
         String token = jwtService.generateToken(
-                user.getEmail(),
+                user.getId().toString(),
                 user.getRole().name()
         );
 
@@ -65,7 +65,7 @@ public class AuthService {
         authEventProducer.sendAuthEvent(user.getEmail());
 
         String token = jwtService.generateToken(
-                user.getEmail(),
+                user.getId().toString(),
                 user.getRole().name()
         );
 

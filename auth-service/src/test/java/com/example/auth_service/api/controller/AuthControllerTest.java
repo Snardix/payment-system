@@ -4,7 +4,6 @@ import com.example.auth_service.api.dto.AuthRequest;
 import com.example.auth_service.api.dto.AuthResponse;
 import com.example.auth_service.api.dto.RegisterRequest;
 import com.example.auth_service.security.config.SecurityConfig;
-import com.example.auth_service.security.details.CustomUserDetailsService;
 import com.example.auth_service.security.jwt.JwtService;
 import com.example.auth_service.service.AuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,9 +33,6 @@ class AuthControllerTest {
 
     @MockBean
     private JwtService jwtService;
-
-    @MockBean
-    private CustomUserDetailsService customUserDetailsService;
 
     @Autowired
     private ObjectMapper objectMapper;

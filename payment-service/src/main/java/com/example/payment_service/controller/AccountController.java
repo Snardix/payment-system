@@ -5,6 +5,7 @@ import com.example.payment_service.dto.account.AccountResponse;
 import com.example.payment_service.dto.account.AccountTopUpRequest;
 import com.example.payment_service.service.AccountService;
 import jakarta.validation.Valid;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -48,11 +49,16 @@ public class AccountController {
         return accountService.getClientAccounts(clientId);
     }
 
-    @PatchMapping("/{id}/top-up")
+    @PatchMapping("/top-up/{id}")
     public AccountResponse topUpAccount(
             @PathVariable UUID id,
             @Valid @RequestBody AccountTopUpRequest request
     ) {
         return accountService.topUpAccount(id, request.getAmount());
+    }
+
+    @PatchMapping("/{accountId}/block")
+    public void blockAccount(@PathVariable UUID accountId) {
+        accountService.blockAccount(accountId);
     }
 }
