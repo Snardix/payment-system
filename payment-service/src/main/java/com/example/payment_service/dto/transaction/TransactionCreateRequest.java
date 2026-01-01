@@ -8,12 +8,20 @@ import java.util.UUID;
 
 public class TransactionCreateRequest {
 
+
+    @NotNull
+    private UUID fromAccountId;
+
     @NotNull
     private UUID toAccountId;
 
     @NotNull
     @Positive
     private BigDecimal amount;
+
+    public UUID getFromAccountId() {return fromAccountId;}
+
+    public void setFromAccountId(UUID fromAccountId) {this.fromAccountId = fromAccountId;}
 
     public UUID getToAccountId() {
         return toAccountId;
