@@ -6,6 +6,11 @@ spring:
     hibernate:
       ddl-auto: none
 
+  security:
+    jwt:
+      secret: supersecretjwtkeysupersecretjwtkey123
+      expiration: 86400000
+
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yml
 

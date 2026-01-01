@@ -5,6 +5,7 @@ import com.example.payment_service.dto.account.AccountResponse;
 import com.example.payment_service.dto.account.AccountTopUpRequest;
 import com.example.payment_service.service.AccountService;
 import jakarta.validation.Valid;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,14 +23,17 @@ public class AccountController {
     }
 
     /**
-     * Создать аккаунт
-     * clientId пока передаём явно (позже будет из JWT)
+     * Создать аккаунт jwt
      */
     @PostMapping
     public AccountResponse createAccount(
-            @RequestParam UUID clientId,
-            @Valid @RequestBody AccountCreateRequest request
+            @RequestBody AccountCreateRequest request
     ) {
+        UUID clientId = (UUID) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
         return accountService.createAccount(clientId, request);
     }
 
@@ -45,7 +49,12 @@ public class AccountController {
      * Получить все аккаунты клиента
      */
     @GetMapping
-    public List<AccountResponse> getClientAccounts(@RequestParam UUID clientId) {
+    public List<AccountResponse> getClientAccounts() {
+        UUID clientId = (UUID) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
         return accountService.getClientAccounts(clientId);
     }
 

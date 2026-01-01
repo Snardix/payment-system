@@ -106,6 +106,7 @@ services:
       kafka:
         condition: service_healthy
     environment:
+      SPRING_PROFILES_ACTIVE: prod
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
 
