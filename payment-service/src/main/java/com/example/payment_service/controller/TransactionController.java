@@ -2,9 +2,11 @@ package com.example.payment_service.controller;
 
 import com.example.payment_service.dto.transaction.TransactionCreateRequest;
 import com.example.payment_service.dto.transaction.TransactionResponse;
+import com.example.payment_service.jwt.AuthPrincipal;
 import com.example.payment_service.mapper.TransactionMapper;
 import com.example.payment_service.service.TransactionService;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -24,31 +26,32 @@ public class TransactionController {
 
     @PostMapping
     public TransactionResponse create(
-            Authentication authentication,
+            @AuthenticationPrincipal AuthPrincipal principal,
             @Valid @RequestBody TransactionCreateRequest request
     ) {
-        UUID clientId = UUID.fromString(authentication.getName());
-
         return TransactionMapper.toResponse(
-                transactionService.createTransfer(clientId, request)
+                transactionService.createTransfer(
+                        principal.getUserId(),
+                        request
+                )
         );
     }
 
     @GetMapping("/outgoing")
-    public List<TransactionResponse> outgoing(Authentication authentication) {
-        UUID clientId = UUID.fromString(authentication.getName());
-
-        return transactionService.getOutgoing(clientId)
+    public List<TransactionResponse> outgoing(
+            @AuthenticationPrincipal AuthPrincipal principal
+    ) {
+        return transactionService.getOutgoing(principal.getUserId())
                 .stream()
                 .map(TransactionMapper::toResponse)
                 .toList();
     }
 
     @GetMapping("/incoming")
-    public List<TransactionResponse> incoming(Authentication authentication) {
-        UUID clientId = UUID.fromString(authentication.getName());
-
-        return transactionService.getIncoming(clientId)
+    public List<TransactionResponse> incoming(
+            @AuthenticationPrincipal AuthPrincipal principal
+    ) {
+        return transactionService.getIncoming(principal.getUserId())
                 .stream()
                 .map(TransactionMapper::toResponse)
                 .toList();

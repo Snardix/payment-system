@@ -3,8 +3,10 @@ package com.example.payment_service.controller;
 import com.example.payment_service.dto.account.AccountCreateRequest;
 import com.example.payment_service.dto.account.AccountResponse;
 import com.example.payment_service.dto.account.AccountTopUpRequest;
+import com.example.payment_service.jwt.AuthPrincipal;
 import com.example.payment_service.service.AccountService;
 import jakarta.validation.Valid;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -27,14 +29,13 @@ public class AccountController {
      */
     @PostMapping
     public AccountResponse createAccount(
+            @AuthenticationPrincipal AuthPrincipal principal,
             @RequestBody AccountCreateRequest request
     ) {
-        UUID clientId = (UUID) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
-
-        return accountService.createAccount(clientId, request);
+        return accountService.createAccount(
+                principal.getUserId(),
+                request
+        );
     }
 
     /**

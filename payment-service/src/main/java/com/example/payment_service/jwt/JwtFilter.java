@@ -32,10 +32,11 @@ public class JwtFilter extends OncePerRequestFilter {
 
             UUID userId = jwtService.extractUserId(token);
             String role = jwtService.extractRole(token);
+            String email = jwtService.extractEmail(token);
 
             UsernamePasswordAuthenticationToken auth =
                     new UsernamePasswordAuthenticationToken(
-                            userId,
+                            new AuthPrincipal(userId, email),
                             null,
                             List.of(() -> "ROLE_" + role)
                     );

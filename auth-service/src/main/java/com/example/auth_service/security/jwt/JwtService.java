@@ -22,10 +22,11 @@ public class JwtService {
         this.expirationMs = expirationMs;
     }
 
-    public String generateToken(String subject, String role) {
+    public String generateToken(String userId, String role, String email) {
         return Jwts.builder()
-                .setSubject(subject)
+                .setSubject(userId)
                 .claim("role", role)
+                .claim("email", email)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
                 .signWith(key)

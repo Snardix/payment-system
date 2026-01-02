@@ -15,8 +15,8 @@ public class NotificationController {
         this.service = service;
     }
 
-    @GetMapping("/{email}")
+    /*@GetMapping("/{email}")
     public List<String> getNotifications(@PathVariable String email) {
         return service.getEvents(email);
-    }
+    }*/
 }

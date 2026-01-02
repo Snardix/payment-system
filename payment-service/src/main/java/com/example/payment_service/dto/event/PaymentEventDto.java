@@ -8,61 +8,88 @@ import java.util.UUID;
 
 public class PaymentEventDto {
 
-    private PaymentEventType eventType;
+    private String eventId;
+    private String eventType;
+    private String aggregateId;
+    private String occurredAt;
+    private Payload payload;
 
-    private UUID clientId;
-    private UUID accountId;
-    private UUID transactionId;
+    public static class Payload {
+        private String email;
+        private String transactionId;
+        private String status;
+        private String amount;
 
-    private BigDecimal amount;
+        public String getEmail() {
+            return email;
+        }
 
-    private Instant timestamp;
+        public void setEmail(String email) {
+            this.email = email;
+        }
 
-    public PaymentEventType getEventType() {
+        public String getTransactionId() {
+            return transactionId;
+        }
+
+        public void setTransactionId(String transactionId) {
+            this.transactionId = transactionId;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+
+        public String getAmount() {
+            return amount;
+        }
+
+        public void setAmount(String amount) {
+            this.amount = amount;
+        }
+    }
+
+    public String getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
+    }
+
+    public String getEventType() {
         return eventType;
     }
 
-    public void setEventType(PaymentEventType eventType) {
+    public void setEventType(String eventType) {
         this.eventType = eventType;
     }
 
-    public UUID getClientId() {
-        return clientId;
+    public String getAggregateId() {
+        return aggregateId;
     }
 
-    public void setClientId(UUID clientId) {
-        this.clientId = clientId;
+    public void setAggregateId(String aggregateId) {
+        this.aggregateId = aggregateId;
     }
 
-    public UUID getAccountId() {
-        return accountId;
+    public Payload getPayload() {
+        return payload;
     }
 
-    public void setAccountId(UUID accountId) {
-        this.accountId = accountId;
+    public void setPayload(Payload payload) {
+        this.payload = payload;
     }
 
-    public UUID getTransactionId() {
-        return transactionId;
+    public String getOccurredAt() {
+        return occurredAt;
     }
 
-    public void setTransactionId(UUID transactionId) {
-        this.transactionId = transactionId;
-    }
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
-
-    public Instant getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Instant timestamp) {
-        this.timestamp = timestamp;
+    public void setOccurredAt(String occurredAt) {
+        this.occurredAt = occurredAt;
     }
 }

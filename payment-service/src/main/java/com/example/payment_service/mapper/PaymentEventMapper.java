@@ -9,7 +9,7 @@ import java.time.Instant;
 
 public class PaymentEventMapper {
 
-    private PaymentEventMapper() {
+    /*private PaymentEventMapper() {
     }
 
     public static PaymentEventDto accountEvent(
@@ -36,5 +36,5 @@ public class PaymentEventMapper {
         event.setAmount(transaction.getAmount());
         event.setTimestamp(Instant.now());
         return event;
-    }
+    }*/
 }

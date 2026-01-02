@@ -26,6 +26,10 @@ public class JwtService {
         return parseClaims(token).get("role", String.class);
     }
 
+    public String extractEmail(String token) {
+        return parseClaims(token).get("email", String.class);
+    }
+
     private Claims parseClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)

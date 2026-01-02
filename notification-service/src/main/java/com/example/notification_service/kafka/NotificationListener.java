@@ -1,10 +1,13 @@
 package com.example.notification_service.kafka;
 
 import com.example.notification_service.dto.GetEvent;
+import com.example.notification_service.dto.NotificationEvent;
 import com.example.notification_service.service.NotificationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
+
+import static org.apache.kafka.common.requests.DeleteAclsResponse.log;
 
 @Service
 public class NotificationListener {
@@ -18,14 +21,18 @@ public class NotificationListener {
     @KafkaListener(topics = "auth-events")
     public void handleEvent(String json) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            GetEvent event = mapper.readValue(json, GetEvent.class);
+            GetEvent event = new ObjectMapper().readValue(json, GetEvent.class);
 
-            notificationService.saveEvent(event.getEmail(), json);
+            NotificationEvent notification = new NotificationEvent(
+                    event.getType(),
+                    String.valueOf(event.getTimestamp()),
+                    null
+            );
 
-            System.out.println("Redis: сохранено событие для: " + event.getEmail());
+            notificationService.save(event.getEmail(), notification);
+
         } catch (Exception e) {
-            System.out.println("Ошибка обработки Kafka JSON: " + e.getMessage());
+            log.error("Auth event error", e);
         }
     }
 }

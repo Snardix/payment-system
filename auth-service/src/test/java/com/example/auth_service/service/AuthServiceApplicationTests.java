@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -50,8 +51,15 @@ class AuthServiceTest {
 		when(passwordEncoder.encode("password"))
 				.thenReturn("hashed");
 
-		when(jwtService.generateToken(anyString(), anyString()))
+		when(jwtService.generateToken(anyString(), anyString(), anyString()))
 				.thenReturn("jwt-token");
+
+		when(userRepository.save(any(User.class)))
+				.thenAnswer(invocation -> {
+					User user = invocation.getArgument(0);
+					user.setId(UUID.randomUUID()); // 🔥 ВАЖНО
+					return user;
+				});
 
 		var response = authService.register(request);
 
@@ -60,7 +68,6 @@ class AuthServiceTest {
 		assertEquals("test@mail.com", response.getUser().getEmail());
 		assertEquals(Role.USER, response.getUser().getRole());
 
-		verify(userRepository).save(any(User.class));
 		verify(authEventProducer)
 				.sendRegistrationEvent("test@mail.com");
 	}
@@ -68,6 +75,7 @@ class AuthServiceTest {
 	@Test
 	void login_success() {
 		User user = new User();
+		user.setId(UUID.randomUUID()); // 🔥 ВАЖНО
 		user.setEmail("test@mail.com");
 		user.setPassword("hashed");
 		user.setRole(Role.USER);
@@ -78,7 +86,7 @@ class AuthServiceTest {
 		when(passwordEncoder.matches("password", "hashed"))
 				.thenReturn(true);
 
-		when(jwtService.generateToken(anyString(), anyString()))
+		when(jwtService.generateToken(anyString(), anyString(), anyString()))
 				.thenReturn("jwt-token");
 
 		AuthRequest request = new AuthRequest(
