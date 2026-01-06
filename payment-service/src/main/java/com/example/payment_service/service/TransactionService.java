@@ -45,55 +45,48 @@ public class TransactionService {
     @Transactional
     public Transaction createTransfer(UUID clientId, TransactionCreateRequest request) {
 
-        UUID fromAccountId = request.getFromAccountId();
-        UUID toAccountId = request.getToAccountId();
+        UUID fromId = request.getFromAccountId();
+        UUID toId = request.getToAccountId();
         BigDecimal amount = request.getAmount();
 
-        // 1. Проверка: разные счета
-        if (fromAccountId.equals(toAccountId)) {
+        if (fromId.equals(toId)) {
             throw new SameAccountTransferException();
         }
 
-        // 2. Аккаунт отправителя
-        Account fromAccount = accountRepository.findById(fromAccountId)
-                .orElseThrow(() -> new AccountNotFoundException(fromAccountId));
+        Account from = accountRepository.findById(fromId)
+                .orElseThrow(() -> new AccountNotFoundException(fromId));
 
-        // 3. Проверка владельца
-        if (!fromAccount.getClientId().equals(clientId)) {
-            throw new AccountOwnershipException(fromAccountId);
+        if (!from.getClientId().equals(clientId)) {
+            throw new AccountOwnershipException(fromId);
         }
 
-        // 4. Аккаунт получателя
-        Account toAccount = accountRepository.findById(toAccountId)
-                .orElseThrow(() -> new AccountNotFoundException(toAccountId));
+        Account to = accountRepository.findById(toId)
+                .orElseThrow(() -> new AccountNotFoundException(toId));
 
-        // 5. Валидация перевода
-        validateTransfer(fromAccount, toAccount, amount);
+        int withdrawn = accountRepository.withdraw(fromId, amount);
+        if (withdrawn == 0) {
+            throw new InsufficientFundsException(fromId, from.getBalance(), amount);
+        }
 
-        // 6. Балансы
-        fromAccount.setBalance(fromAccount.getBalance().subtract(amount));
-        toAccount.setBalance(toAccount.getBalance().add(amount));
+        accountRepository.deposit(toId, amount);
 
-        // 7. Транзакция
-        Transaction transaction = new Transaction(fromAccount, toAccount, amount);
-        transaction.setStatus(TransactionStatus.SUCCESS);
+        Transaction tx = new Transaction(from, to, amount);
+        tx.setStatus(TransactionStatus.SUCCESS);
 
-        accountRepository.save(fromAccount);
-        accountRepository.save(toAccount);
+        Transaction saved = transactionRepository.save(tx);
 
-        Transaction saved = transactionRepository.save(transaction);
-
-        OutboxEvent event = new OutboxEvent(
-                "TRANSACTION",
-                saved.getId(),
-                "TRANSACTION_CREATED",
-                buildPaymentEvent(saved)
+        outboxRepository.save(
+                new OutboxEvent(
+                        "TRANSACTION",
+                        saved.getId(),
+                        "TRANSACTION_CREATED",
+                        buildPaymentEvent(saved)
+                )
         );
-
-        outboxRepository.save(event);
 
         return saved;
     }
+
 
     private String buildPaymentEvent(Transaction tx) {
 
