@@ -38,6 +38,8 @@
 
 ```
 docker-compose up --build
+docker compose -f docker-compose.yml -f docker-compose.test.yml --compatibility up --build
+
 ```
 
 Сервисы автоматически поднимаются вместе с PostgreSQL и так же создаются все необходимые бд и таблицы в них.

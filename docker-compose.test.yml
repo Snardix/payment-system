@@ -19,16 +19,6 @@ services:
       timeout: 5s
       retries: 5
 
-  nginx:
-    image: nginx:1.25
-    container_name: auth-nginx
-    ports:
-      - "8081:80"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-    depends_on:
-      - auth-service
-
 
   redis:
     image: redis:7
@@ -84,8 +74,24 @@ services:
     container_name: auth-service
     ports:
       - "8081:8081"
+      - "9010:9010"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512m
     environment:
       SPRING_PROFILES_ACTIVE: prod
+      JAVA_TOOL_OPTIONS: >
+        -XX:+UseContainerSupport
+        -XX:MaxRAMPercentage=70.0
+        -XX:ActiveProcessorCount=1
+        -Dcom.sun.management.jmxremote
+        -Dcom.sun.management.jmxremote.port=9010
+        -Dcom.sun.management.jmxremote.rmi.port=9010
+        -Dcom.sun.management.jmxremote.authenticate=false
+        -Dcom.sun.management.jmxremote.ssl=false
+        -Djava.rmi.server.hostname=localhost
     depends_on:
       postgres:
         condition: service_healthy
@@ -97,8 +103,25 @@ services:
     container_name: payment-service
     ports:
       - "8083:8083"
+      - "9011:9011"
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1024m
     environment:
       SPRING_PROFILES_ACTIVE: prod
+      JAVA_TOOL_OPTIONS: >
+        -XX:+UseContainerSupport
+        -XX:MaxRAMPercentage=70.0
+        -XX:InitialRAMPercentage=50.0
+        -XX:ActiveProcessorCount=1
+        -Dcom.sun.management.jmxremote
+        -Dcom.sun.management.jmxremote.port=9011
+        -Dcom.sun.management.jmxremote.rmi.port=9011
+        -Dcom.sun.management.jmxremote.authenticate=false
+        -Dcom.sun.management.jmxremote.ssl=false
+        -Djava.rmi.server.hostname=localhost
     depends_on:
       postgres:
         condition: service_healthy
@@ -110,6 +133,12 @@ services:
     container_name: notification-service
     ports:
       - "8082:8082"
+      - "9012:9012"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512m
     depends_on:
       redis:
         condition: service_healthy
@@ -118,6 +147,16 @@ services:
     environment:
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
+      JAVA_TOOL_OPTIONS: >
+        -XX:+UseContainerSupport
+        -XX:MaxRAMPercentage=70.0
+        -XX:ActiveProcessorCount=1
+        -Dcom.sun.management.jmxremote
+        -Dcom.sun.management.jmxremote.port=9012
+        -Dcom.sun.management.jmxremote.rmi.port=9012
+        -Dcom.sun.management.jmxremote.authenticate=false
+        -Dcom.sun.management.jmxremote.ssl=false
+        -Djava.rmi.server.hostname=localhost
 
 volumes:
   postgres_data:
