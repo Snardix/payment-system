@@ -81,35 +81,76 @@ services:
 
   auth-service:
     build: ./auth-service
-    container_name: auth-service
-    ports:
-      - "8081:8081"
+    expose:
+      - "8081"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512m
     environment:
+      SERVER_PORT: 8081
+      SERVER_ADDRESS: 0.0.0.0
       SPRING_PROFILES_ACTIVE: prod
+      JAVA_TOOL_OPTIONS: >
+        -XX:+UseContainerSupport
+        -XX:MaxRAMPercentage=70.0
+        -XX:ActiveProcessorCount=1
+        -Dcom.sun.management.jmxremote
+        -Dcom.sun.management.jmxremote.port=9010
+        -Dcom.sun.management.jmxremote.rmi.port=9010
+        -Dcom.sun.management.jmxremote.authenticate=false
+        -Dcom.sun.management.jmxremote.ssl=false
+        -Djava.rmi.server.hostname=localhost
     depends_on:
       postgres:
         condition: service_healthy
       kafka:
         condition: service_healthy
 
+
   payment-service:
     build: ./payment-service
-    container_name: payment-service
-    ports:
-      - "8083:8083"
+    expose:
+      - "8083"
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1024m
     environment:
+      SERVER_PORT: 8083
+      SERVER_ADDRESS: 0.0.0.0
       SPRING_PROFILES_ACTIVE: prod
+      JAVA_TOOL_OPTIONS: >
+        -XX:+UseContainerSupport
+        -XX:MaxRAMPercentage=70.0
+        -XX:InitialRAMPercentage=50.0
+        -XX:ActiveProcessorCount=1
+        -Dcom.sun.management.jmxremote
+        -Dcom.sun.management.jmxremote.port=9011
+        -Dcom.sun.management.jmxremote.rmi.port=9011
+        -Dcom.sun.management.jmxremote.authenticate=false
+        -Dcom.sun.management.jmxremote.ssl=false
+        -Djava.rmi.server.hostname=localhost
     depends_on:
       postgres:
         condition: service_healthy
       kafka:
         condition: service_healthy
+
 
   notification-service:
     build: ./notification-service
     container_name: notification-service
     ports:
       - "8082:8082"
+      - "9012:9012"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512m
     depends_on:
       redis:
         condition: service_healthy
@@ -118,6 +159,16 @@ services:
     environment:
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
+      JAVA_TOOL_OPTIONS: >
+        -XX:+UseContainerSupport
+        -XX:MaxRAMPercentage=70.0
+        -XX:ActiveProcessorCount=1
+        -Dcom.sun.management.jmxremote
+        -Dcom.sun.management.jmxremote.port=9012
+        -Dcom.sun.management.jmxremote.rmi.port=9012
+        -Dcom.sun.management.jmxremote.authenticate=false
+        -Dcom.sun.management.jmxremote.ssl=false
+        -Djava.rmi.server.hostname=localhost
 
 volumes:
   postgres_data:

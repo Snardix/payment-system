@@ -21,7 +21,7 @@ import static org.apache.kafka.common.requests.DeleteAclsResponse.log;
 @EnableScheduling
 public class OutboxWorker {
 
-    private static final int BATCH_SIZE = 10;
+    private static final int BATCH_SIZE = 50;
     private static final int MAX_RETRIES = 2;
 
     private final OutboxRepository outboxRepository;
@@ -35,14 +35,12 @@ public class OutboxWorker {
         this.producer = producer;
     }
 
-    @Scheduled(fixedDelay = 3000)
+    @Scheduled(fixedDelay = 1000)
     @Transactional
     public void processOutbox() {
 
-        Pageable pageable = PageRequest.of(0, BATCH_SIZE);
-
         List<OutboxEvent> events =
-                outboxRepository.findForProcessing(pageable);
+                outboxRepository.findForProcessing(BATCH_SIZE);
 
         for (OutboxEvent event : events) {
             try {
@@ -53,7 +51,6 @@ public class OutboxWorker {
 
                 event.setStatus(OutboxStatus.SENT.name());
                 event.setSentAt(Instant.now());
-                log.info("Outbox → Kafka payload: {}", event.getPayload());
 
             } catch (Exception ex) {
 
@@ -68,4 +65,5 @@ public class OutboxWorker {
             }
         }
     }
+
 }

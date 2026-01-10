@@ -24,16 +24,9 @@ public class OutboxCleanupJob {
 
         Instant now = Instant.now();
 
-        repository.deleteAll(
-                repository.findAll().stream()
-                        .filter(e ->
-                                (e.getStatus().equals("SENT")
-                                        && e.getSentAt().isBefore(now.minusSeconds(60)))
-                                        ||
-                                        (e.getStatus().equals("DEAD")
-                                                && e.getCreatedAt().isBefore(now.minusSeconds(30)))
-                        )
-                        .toList()
+        repository.deleteOld(
+                now.minusSeconds(60),
+                now.minusSeconds(30)
         );
     }
 }
