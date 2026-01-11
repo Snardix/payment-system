@@ -84,6 +84,7 @@ services:
     expose:
       - "8081"
     deploy:
+      replicas: 3
       resources:
         limits:
           cpus: "0.5"
@@ -92,6 +93,27 @@ services:
       SERVER_PORT: 8081
       SERVER_ADDRESS: 0.0.0.0
       SPRING_PROFILES_ACTIVE: prod
+      SPRING_APPLICATION_JSON: |
+        {
+          "server": {
+            "tomcat": {
+              "threads": {
+                "max": 200,
+                "min-spare": 50
+              },
+              "accept-count": 300
+            }
+          },
+          "spring": {
+            "datasource": {
+              "hikari": {
+                "maximum-pool-size": 30,
+                "minimum-idle": 10,
+                "connection-timeout": 3000,
+              }
+            }
+          }
+        }
       JAVA_TOOL_OPTIONS: >
         -XX:+UseContainerSupport
         -XX:MaxRAMPercentage=70.0
@@ -114,6 +136,7 @@ services:
     expose:
       - "8083"
     deploy:
+      replicas: 3
       resources:
         limits:
           cpus: "1.0"
@@ -122,6 +145,29 @@ services:
       SERVER_PORT: 8083
       SERVER_ADDRESS: 0.0.0.0
       SPRING_PROFILES_ACTIVE: prod
+      SPRING_APPLICATION_JSON: |
+        {
+          "server": {
+            "tomcat": {
+              "threads": {
+                "max": 300,
+                "min-spare": 50
+              },
+              "accept-count": 500
+            }
+          },
+          "spring": {
+            "datasource": {
+              "hikari": {
+                "maximum-pool-size": 30,
+                "minimum-idle": 10,
+                "connection-timeout": 3000,
+                "idle-timeout": 30000,
+                "max-lifetime": 600000
+              }
+            }
+          }
+        }
       JAVA_TOOL_OPTIONS: >
         -XX:+UseContainerSupport
         -XX:MaxRAMPercentage=70.0

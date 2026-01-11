@@ -7,9 +7,11 @@ import com.example.payment_service.enums.TransactionStatus;
 import com.example.payment_service.exception.*;
 import com.example.payment_service.jwt.AuthPrincipal;
 import com.example.payment_service.model.Account;
+import com.example.payment_service.model.IdempotentRequest;
 import com.example.payment_service.model.OutboxEvent;
 import com.example.payment_service.model.Transaction;
 import com.example.payment_service.repository.AccountRepository;
+import com.example.payment_service.repository.IdempotencyRepository;
 import com.example.payment_service.repository.OutboxRepository;
 import com.example.payment_service.repository.TransactionRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -22,6 +24,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -30,20 +33,64 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
     private final OutboxRepository outboxRepository;
+    private final IdempotencyRepository idempotencyRepository;
     private final ObjectMapper objectMapper;
 
     public TransactionService(TransactionRepository transactionRepository,
                               AccountRepository accountRepository,
                               OutboxRepository outboxRepository,
+                              IdempotencyRepository idempotencyRepository,
                               ObjectMapper objectMapper) {
         this.transactionRepository = transactionRepository;
         this.accountRepository = accountRepository;
         this.outboxRepository = outboxRepository;
+        this.idempotencyRepository = idempotencyRepository;
         this.objectMapper = objectMapper;
     }
 
     @Transactional
     public Transaction createTransfer(UUID clientId, TransactionCreateRequest request) {
+
+        // 1. Проверяем было ли намерение
+        Optional<IdempotentRequest> existing =
+                idempotencyRepository.findByClientIdAndFromAccountIdAndToAccountIdAndAmount(
+                        clientId,
+                        request.getFromAccountId(),
+                        request.getToAccountId(),
+                        request.getAmount()
+                );
+
+        if (existing.isPresent()) {
+            IdempotentRequest intent = existing.get();
+
+            if (intent.getTransactionId() != null) {
+                return transactionRepository
+                        .findById(intent.getTransactionId())
+                        .orElseThrow();
+            }
+
+            if ("PROCESSING".equals(intent.getStatus())) {
+                throw new TransactionInProgressException(
+                        clientId,
+                        request.getFromAccountId(),
+                        request.getToAccountId()
+                );
+            }
+
+            throw new IllegalStateException("Unknown idempotent state");
+        }
+
+        // 2. Создаём запись о НАМЕРЕНИИ (до списания денег)
+        IdempotentRequest intent = new IdempotentRequest(
+                clientId,
+                request.getFromAccountId(),
+                request.getToAccountId(),
+                request.getAmount()
+        );
+
+        idempotencyRepository.save(intent);
+
+        // 3. Дальше обработка транзакции
 
         UUID fromId = request.getFromAccountId();
         UUID toId = request.getToAccountId();
@@ -75,6 +122,12 @@ public class TransactionService {
 
         Transaction saved = transactionRepository.save(tx);
 
+        // 4. Привязываем результат к идемпотентной записи
+        intent.setTransactionId(saved.getId());
+        intent.setStatus("SUCCESS");
+        idempotencyRepository.save(intent);
+
+        // 5. Outbox — как и было
         outboxRepository.save(
                 new OutboxEvent(
                         "TRANSACTION",

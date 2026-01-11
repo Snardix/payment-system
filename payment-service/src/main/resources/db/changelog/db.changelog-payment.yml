@@ -71,6 +71,62 @@ databaseChangeLog:
                   type: TIMESTAMP
                   defaultValueComputed: CURRENT_TIMESTAMP
 
+        - createTable:
+            tableName: idempotent_requests
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: client_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: from_account_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: to_account_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: amount
+                  type: DECIMAL(19,2)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: transaction_id
+                  type: UUID
+                  constraints:
+                    nullable: true
+
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+
+        - addUniqueConstraint:
+            tableName: idempotent_requests
+            columnNames: client_id, from_account_id, to_account_id, amount
+            constraintName: uk_idempotent_intent
+
         - addForeignKeyConstraint:
             baseTableName: transactions
             baseColumnNames: from_account_id

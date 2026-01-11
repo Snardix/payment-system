@@ -17,6 +17,14 @@ public class GlobalExceptionHandler {
         return buildError(HttpStatus.NOT_FOUND, ex, request);
     }
 
+    @ExceptionHandler(TransactionInProgressException.class)
+    public ResponseEntity<ApiErrorResponse> handleTransactionInProgress(
+            TransactionInProgressException ex,
+            HttpServletRequest request
+    ) {
+        return buildError(HttpStatus.CONFLICT, ex, request);
+    }
+
     @ExceptionHandler({
             AccountBlockedException.class,
             InsufficientFundsException.class,
