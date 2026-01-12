@@ -4,6 +4,7 @@ import com.example.payment_service.dto.transaction.TransactionCreateRequest;
 import com.example.payment_service.dto.transaction.TransactionResponse;
 import com.example.payment_service.jwt.AuthPrincipal;
 import com.example.payment_service.mapper.TransactionMapper;
+import com.example.payment_service.service.TransactionFacade;
 import com.example.payment_service.service.TransactionService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,19 +20,23 @@ import java.util.stream.Collectors;
 public class TransactionController {
 
     private final TransactionService transactionService;
+    private final TransactionFacade transactionFacade;
 
-    public TransactionController(TransactionService transactionService) {
+    public TransactionController(TransactionService transactionService, TransactionFacade transactionFacade) {
         this.transactionService = transactionService;
+        this.transactionFacade = transactionFacade;
     }
 
     @PostMapping
     public TransactionResponse create(
             @AuthenticationPrincipal AuthPrincipal principal,
+            @RequestHeader("Idempotency-Key") String idempotencyKey,
             @Valid @RequestBody TransactionCreateRequest request
     ) {
         return TransactionMapper.toResponse(
-                transactionService.createTransfer(
+                transactionFacade.createTransfer(
                         principal.getUserId(),
+                        idempotencyKey,
                         request
                 )
         );

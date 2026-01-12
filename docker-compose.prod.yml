@@ -6,15 +6,21 @@ services:
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
-      POSTGRES_DB: postgres
+      POSTGRES_DB: payment_service
+      POSTGRES_MAX_CONNECTIONS: 120
     ports:
       - "5440:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init-db:/docker-entrypoint-initdb.d
+    deploy:
+      resources:
+        limits:
+          cpus: "4.0"
+          memory: 6g
     restart: unless-stopped
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U root -d postgres" ]
+      test: [ "CMD-SHELL", "pg_isready -U root -d payment_service" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -29,12 +35,16 @@ services:
     depends_on:
       - auth-service
 
-
   redis:
     image: redis:7
     container_name: notification_redis
     ports:
       - "6379:6379"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 1g
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -50,6 +60,11 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
     ports:
       - "2181:2181"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 1g
     healthcheck:
       test: ["CMD", "bash", "-c", "echo ruok | nc localhost 2181 | grep imok"]
       interval: 10s
@@ -73,6 +88,11 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    deploy:
+      resources:
+        limits:
+          cpus: "1.5"
+          memory: 4g
     healthcheck:
       test: ["CMD", "bash", "-c", "kafka-topics --bootstrap-server localhost:9092 --list"]
       interval: 15s
@@ -88,7 +108,7 @@ services:
       resources:
         limits:
           cpus: "0.5"
-          memory: 512m
+          memory: 768m
     environment:
       SERVER_PORT: 8081
       SERVER_ADDRESS: 0.0.0.0
@@ -98,18 +118,18 @@ services:
           "server": {
             "tomcat": {
               "threads": {
-                "max": 200,
-                "min-spare": 50
+                "max": 100,
+                "min-spare": 20
               },
-              "accept-count": 300
+              "accept-count": 50
             }
           },
           "spring": {
             "datasource": {
               "hikari": {
-                "maximum-pool-size": 10,
-                "minimum-idle": 5,
-                "connection-timeout": 5000
+                "maximum-pool-size": 5,
+                "minimum-idle": 2,
+                "connection-timeout": 2000
               }
             }
           }
@@ -130,7 +150,6 @@ services:
       kafka:
         condition: service_healthy
 
-
   payment-service:
     build: ./payment-service
     expose:
@@ -139,8 +158,8 @@ services:
       replicas: 3
       resources:
         limits:
-          cpus: "1.0"
-          memory: 1024m
+          cpus: "1.5"
+          memory: 3g
     environment:
       SERVER_PORT: 8083
       SERVER_ADDRESS: 0.0.0.0
@@ -150,18 +169,18 @@ services:
           "server": {
             "tomcat": {
               "threads": {
-                "max": 300,
-                "min-spare": 50
+                "max": 60,
+                "min-spare": 20
               },
-              "accept-count": 500
+              "accept-count": 100
             }
           },
           "spring": {
             "datasource": {
               "hikari": {
-                "maximum-pool-size": 100,
-                "minimum-idle": 10,
-                "connection-timeout": 10000,
+                "maximum-pool-size": 10,
+                "minimum-idle": 5,
+                "connection-timeout": 5000,
                 "idle-timeout": 30000,
                 "max-lifetime": 600000
               }
@@ -172,7 +191,6 @@ services:
         -XX:+UseContainerSupport
         -XX:MaxRAMPercentage=70.0
         -XX:InitialRAMPercentage=50.0
-        -XX:ActiveProcessorCount=1
         -Dcom.sun.management.jmxremote
         -Dcom.sun.management.jmxremote.port=9011
         -Dcom.sun.management.jmxremote.rmi.port=9011
@@ -185,7 +203,6 @@ services:
       kafka:
         condition: service_healthy
 
-
   notification-service:
     build: ./notification-service
     container_name: notification-service
@@ -196,7 +213,7 @@ services:
       resources:
         limits:
           cpus: "0.5"
-          memory: 512m
+          memory: 1g
     depends_on:
       redis:
         condition: service_healthy

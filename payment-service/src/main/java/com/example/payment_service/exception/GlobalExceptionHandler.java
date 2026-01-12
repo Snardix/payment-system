@@ -28,6 +28,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
             AccountBlockedException.class,
             InsufficientFundsException.class,
+            InvalidAccountException.class,
             SameAccountTransferException.class
     })
     public ResponseEntity<ApiErrorResponse> handleBadRequest(

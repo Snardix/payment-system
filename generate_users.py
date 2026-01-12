@@ -1,6 +1,6 @@
 import csv
 
-COUNT = 500
+COUNT = 10000
 OUTPUT_FILE = "users.csv"
 
 with open(OUTPUT_FILE, mode="w", newline="", encoding="utf-8") as file:

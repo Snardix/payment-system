@@ -1,0 +1,42 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-account-client-index
+      author: system
+      changes:
+        - createIndex:
+            tableName: accounts
+            indexName: idx_accounts_client_id
+            columns:
+              - column:
+                  name: client_id
+
+  - changeSet:
+      id: add-transaction-account-indexes
+      author: system
+      changes:
+        - createIndex:
+            tableName: transactions
+            indexName: idx_transactions_from_account
+            columns:
+              - column:
+                  name: from_account_id
+
+        - createIndex:
+            tableName: transactions
+            indexName: idx_transactions_to_account
+            columns:
+              - column:
+                  name: to_account_id
+
+  - changeSet:
+      id: add-outbox-status-created-index
+      author: system
+      changes:
+        - createIndex:
+            tableName: outbox_events
+            indexName: idx_outbox_status_created_at
+            columns:
+              - column:
+                  name: status
+              - column:
+                  name: created_at

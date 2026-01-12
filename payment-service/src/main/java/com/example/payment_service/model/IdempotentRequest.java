@@ -9,13 +9,8 @@ import java.util.UUID;
 @Table(
         name = "idempotent_requests",
         uniqueConstraints = @UniqueConstraint(
-                name = "uk_idempotent_intent",
-                columnNames = {
-                        "client_id",
-                        "from_account_id",
-                        "to_account_id",
-                        "amount"
-                }
+                name = "uk_idempotent_client_key",
+                columnNames = {"client_id", "idempotency_key"}
         )
 )
 public class IdempotentRequest {
@@ -25,6 +20,9 @@ public class IdempotentRequest {
 
     @Column(name = "client_id", nullable = false)
     private UUID clientId;
+
+    @Column(name = "idempotency_key", nullable = false)
+    private String idempotencyKey;
 
     @Column(name = "from_account_id", nullable = false)
     private UUID fromAccountId;
@@ -45,12 +43,14 @@ public class IdempotentRequest {
 
     public IdempotentRequest(
             UUID clientId,
+            String idempotencyKey,
             UUID fromAccountId,
             UUID toAccountId,
             BigDecimal amount
     ) {
         this.id = UUID.randomUUID();
         this.clientId = clientId;
+        this.idempotencyKey = idempotencyKey;
         this.fromAccountId = fromAccountId;
         this.toAccountId = toAccountId;
         this.amount = amount;
@@ -73,6 +73,14 @@ public class IdempotentRequest {
         this.clientId = clientId;
     }
 
+    public String getIdempotencyKey() {
+        return idempotencyKey;
+    }
+
+    public void setIdempotencyKey(String idempotencyKey) {
+        this.idempotencyKey = idempotencyKey;
+    }
+
     public UUID getFromAccountId() {
         return fromAccountId;
     }
@@ -89,8 +97,12 @@ public class IdempotentRequest {
         this.toAccountId = toAccountId;
     }
 
-    public String getStatus() {
-        return status;
+    public UUID getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(UUID transactionId) {
+        this.transactionId = transactionId;
     }
 
     public BigDecimal getAmount() {
@@ -101,12 +113,8 @@ public class IdempotentRequest {
         this.amount = amount;
     }
 
-    public UUID getTransactionId() {
-        return transactionId;
-    }
-
-    public void setTransactionId(UUID transactionId) {
-        this.transactionId = transactionId;
+    public String getStatus() {
+        return status;
     }
 
     public void setStatus(String status) {

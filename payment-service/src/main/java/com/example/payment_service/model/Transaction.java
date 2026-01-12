@@ -18,36 +18,29 @@ public class Transaction {
     @Id
     @GeneratedValue
     @UuidGenerator
-    @Column(name = "id", nullable = false)
     private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "from_account_id", nullable = false)
-    private Account fromAccount;
+    @Column(name = "from_account_id", nullable = false)
+    private UUID fromAccountId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "to_account_id", nullable = false)
-    private Account toAccount;
+    @Column(name = "to_account_id", nullable = false)
+    private UUID toAccountId;
 
-    @NotNull
-    @Column(name = "amount", nullable = false, precision = 19, scale = 2)
+    @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal amount;
 
-    @NotNull
-    @Column(name = "status", nullable = false, length = 20)
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private TransactionStatus status;
 
     @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
     private Instant createdAt;
 
-    public Transaction() {
-    }
+    protected Transaction() {}
 
-    public Transaction(Account fromAccount, Account toAccount, BigDecimal amount) {
-        this.fromAccount = fromAccount;
-        this.toAccount = toAccount;
+    public Transaction(UUID fromAccountId, UUID toAccountId, BigDecimal amount) {
+        this.fromAccountId = fromAccountId;
+        this.toAccountId = toAccountId;
         this.amount = amount;
         this.status = TransactionStatus.CREATED;
     }
@@ -56,12 +49,12 @@ public class Transaction {
         return id;
     }
 
-    public Account getFromAccount() {
-        return fromAccount;
+    public UUID getFromAccount() {
+        return fromAccountId;
     }
 
-    public Account getToAccount() {
-        return toAccount;
+    public UUID getToAccount() {
+        return toAccountId;
     }
 
     public @NotNull BigDecimal getAmount() {
@@ -76,12 +69,20 @@ public class Transaction {
         return createdAt;
     }
 
-    public void setFromAccount(Account fromAccount) {
-        this.fromAccount = fromAccount;
+    public UUID getFromAccountId() {
+        return fromAccountId;
     }
 
-    public void setToAccount(Account toAccount) {
-        this.toAccount = toAccount;
+    public void setFromAccountId(UUID fromAccountId) {
+        this.fromAccountId = fromAccountId;
+    }
+
+    public UUID getToAccountId() {
+        return toAccountId;
+    }
+
+    public void setToAccountId(UUID toAccountId) {
+        this.toAccountId = toAccountId;
     }
 
     public void setAmount(@NotNull BigDecimal amount) {

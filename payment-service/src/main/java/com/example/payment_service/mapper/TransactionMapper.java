@@ -11,8 +11,8 @@ public class TransactionMapper {
     public static TransactionResponse toResponse(Transaction transaction) {
         TransactionResponse dto = new TransactionResponse();
         dto.setId(transaction.getId());
-        dto.setFromAccountId(transaction.getFromAccount().getClientId());
-        dto.setToAccountId(transaction.getToAccount().getClientId());
+        dto.setFromAccountId(transaction.getFromAccountId());
+        dto.setToAccountId(transaction.getToAccountId());
         dto.setAmount(transaction.getAmount());
         dto.setStatus(transaction.getStatus());
         dto.setCreatedAt(transaction.getCreatedAt());

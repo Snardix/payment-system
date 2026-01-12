@@ -40,6 +40,7 @@
 docker-compose up --build
 docker compose -f docker-compose.yml -f docker-compose.test.yml --compatibility up --build
 docker-compose -f docker-compose.yml --compatibility up --scale auth-service=3 --scale payment-service=3 --build
+docker-compose -f docker-compose.prod.yml --compatibility up --scale auth-service=3 --scale payment-service=5 --build
 
 ```
 
