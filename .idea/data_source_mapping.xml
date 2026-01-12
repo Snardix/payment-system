@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourcePerFileMappings">
-    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/2d5ba78b-78ed-4fba-b7e1-e2d4bf26ca8d/console.sql" value="2d5ba78b-78ed-4fba-b7e1-e2d4bf26ca8d" />
-    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/2d5ba78b-78ed-4fba-b7e1-e2d4bf26ca8d/console_3.sql" value="2d5ba78b-78ed-4fba-b7e1-e2d4bf26ca8d" />
-    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/2d5ba78b-78ed-4fba-b7e1-e2d4bf26ca8d/console_4.sql" value="2d5ba78b-78ed-4fba-b7e1-e2d4bf26ca8d" />
-    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/2d5ba78b-78ed-4fba-b7e1-e2d4bf26ca8d/console_5.sql" value="2d5ba78b-78ed-4fba-b7e1-e2d4bf26ca8d" />
-    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/2d5ba78b-78ed-4fba-b7e1-e2d4bf26ca8d/console_6.sql" value="2d5ba78b-78ed-4fba-b7e1-e2d4bf26ca8d" />
-    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/2d5ba78b-78ed-4fba-b7e1-e2d4bf26ca8d/console_7.sql" value="2d5ba78b-78ed-4fba-b7e1-e2d4bf26ca8d" />
-    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/2d5ba78b-78ed-4fba-b7e1-e2d4bf26ca8d/console_8.sql" value="2d5ba78b-78ed-4fba-b7e1-e2d4bf26ca8d" />
-    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/2d5ba78b-78ed-4fba-b7e1-e2d4bf26ca8d/console_9.sql" value="2d5ba78b-78ed-4fba-b7e1-e2d4bf26ca8d" />
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/443795cd-9f52-4da7-893b-41abd9d4fb52/console.sql" value="443795cd-9f52-4da7-893b-41abd9d4fb52" />
     <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/48a6bb73-e052-4774-8718-2312052b9758/console.sql" value="48a6bb73-e052-4774-8718-2312052b9758" />
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/49b86596-a587-4e7b-82b6-63ad7a2793b2/console.sql" value="49b86596-a587-4e7b-82b6-63ad7a2793b2" />
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/49b86596-a587-4e7b-82b6-63ad7a2793b2/console_1.sql" value="49b86596-a587-4e7b-82b6-63ad7a2793b2" />
   </component>
 </project>

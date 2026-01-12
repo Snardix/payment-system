@@ -1,11 +1,19 @@
 spring:
   datasource:
-    url: jdbc:postgresql://postgres:5432/payment_service
+    url: jdbc:postgresql://payment_postgres:5432/payment_service
     username: root
     password: root
 
   jpa:
     show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 50
+        order_inserts: true
+        order_updates: true
+        generate_statistics: false
 
   kafka:
     bootstrap-servers: kafka:9092

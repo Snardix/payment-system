@@ -1,8 +1,7 @@
 services:
 
-  postgres:
+  payment_postgres:
     image: postgres:15
-    container_name: payment_postgres
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
@@ -11,16 +10,38 @@ services:
     ports:
       - "5440:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./init-db:/docker-entrypoint-initdb.d
+      - payment_data:/var/lib/postgresql/data
     deploy:
       resources:
         limits:
-          cpus: "4.0"
-          memory: 6g
+          cpus: "3.0"
+          memory: 4g
     restart: unless-stopped
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U root -d payment_service" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  auth_postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: auth_service
+      POSTGRES_MAX_CONNECTIONS: 50
+    ports:
+      - "5441:5432"
+    volumes:
+      - auth_data:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 3g
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U root -d auth_service" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -145,7 +166,7 @@ services:
         -Dcom.sun.management.jmxremote.ssl=false
         -Djava.rmi.server.hostname=localhost
     depends_on:
-      postgres:
+      auth_postgres:
         condition: service_healthy
       kafka:
         condition: service_healthy
@@ -169,18 +190,18 @@ services:
           "server": {
             "tomcat": {
               "threads": {
-                "max": 60,
-                "min-spare": 20
+                "max": 24,
+                "min-spare": 8
               },
-              "accept-count": 100
+              "accept-count": 50
             }
           },
           "spring": {
             "datasource": {
               "hikari": {
-                "maximum-pool-size": 10,
-                "minimum-idle": 5,
-                "connection-timeout": 5000,
+                "maximum-pool-size": 20,
+                "minimum-idle": 8,
+                "connection-timeout": 3000,
                 "idle-timeout": 30000,
                 "max-lifetime": 600000
               }
@@ -191,6 +212,7 @@ services:
         -XX:+UseContainerSupport
         -XX:MaxRAMPercentage=70.0
         -XX:InitialRAMPercentage=50.0
+        -XX:ActiveProcessorCount=2
         -Dcom.sun.management.jmxremote
         -Dcom.sun.management.jmxremote.port=9011
         -Dcom.sun.management.jmxremote.rmi.port=9011
@@ -198,7 +220,7 @@ services:
         -Dcom.sun.management.jmxremote.ssl=false
         -Djava.rmi.server.hostname=localhost
     depends_on:
-      postgres:
+      payment_postgres:
         condition: service_healthy
       kafka:
         condition: service_healthy
@@ -234,4 +256,5 @@ services:
         -Djava.rmi.server.hostname=localhost
 
 volumes:
-  postgres_data:
+  payment_data:
+  auth_data:
