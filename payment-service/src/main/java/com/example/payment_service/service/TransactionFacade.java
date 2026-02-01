@@ -4,6 +4,7 @@ import com.example.payment_service.dto.transaction.TransactionCreateRequest;
 import com.example.payment_service.model.IdempotentRequest;
 import com.example.payment_service.model.Transaction;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -24,6 +25,7 @@ public class TransactionFacade {
         this.outboxService = outboxService;
     }
 
+    @Transactional
     public Transaction createTransfer(
             UUID clientId,
             String idempotencyKey,

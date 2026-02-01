@@ -28,7 +28,7 @@ public class OutboxEvent {
     private Instant createdAt;
     private Instant sentAt;
 
-    protected OutboxEvent() {}
+    public OutboxEvent() {}
 
     public OutboxEvent(
             String aggregateType,

@@ -36,7 +36,7 @@ public class Transaction {
     @CreationTimestamp
     private Instant createdAt;
 
-    protected Transaction() {}
+    public Transaction() {}
 
     public Transaction(UUID fromAccountId, UUID toAccountId, BigDecimal amount) {
         this.fromAccountId = fromAccountId;

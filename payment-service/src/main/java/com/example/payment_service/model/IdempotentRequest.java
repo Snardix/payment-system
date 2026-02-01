@@ -39,7 +39,7 @@ public class IdempotentRequest {
     @Column(nullable = false)
     private String status;
 
-    protected IdempotentRequest() {}
+    public IdempotentRequest() {}
 
     public IdempotentRequest(
             UUID clientId,
